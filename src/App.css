@@ -1,0 +1,4 @@
+#canvas {
+  @apply h-full w-full md:w-4/5;
+  @apply bg-green-500 border-4 border-black drop-shadow-xl block m-auto;
+}
