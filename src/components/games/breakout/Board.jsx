@@ -1,8 +1,12 @@
 import React, { useEffect, useRef } from "react";
+import data from "../../../data/data";
+import { BallMovement } from "../../../lib/BallMovement";
+import Paddle from "../../../lib/Paddle";
+import WallCollision from "../../../lib/WallCollision";
+let { ballObj, paddleProps } = data;
 
 const Board = () => {
   const canvasRef = useRef(null);
-  let x = 0;
 
   useEffect(() => {
     const render = () => {
@@ -10,17 +14,14 @@ const Board = () => {
       const ctx = canvas.getContext("2d");
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.beginPath();
-      ctx.fillStyle = "red";
-      ctx.arc(x, 75, 10, 0, Math.PI * 2);
-      ctx.strokeStyle = "black";
-      ctx.strokeWidth = 5;
-      ctx.fill();
-      ctx.stroke();
-      x += 0.5;
-      if (x > canvas.width) {
-        x = 0;
-      }
+
+      // Handle ball movement
+      BallMovement(ctx, ballObj);
+
+      // Handle ball & wall collision
+      WallCollision(ballObj, canvas);
+
+      Paddle(ctx, canvas, paddleProps);
 
       requestAnimationFrame(render);
     };
@@ -28,7 +29,16 @@ const Board = () => {
     render();
   }, []);
 
-  return <canvas ref={canvasRef} id="canvas"></canvas>;
+  return (
+    <canvas
+      ref={canvasRef}
+      id="canvas"
+      width={650}
+      height={300}
+      onMouseMove={(event) => {
+        paddleProps.x = event.clientX - paddleProps.width / 2 - 150;
+      }}></canvas>
+  );
 };
 
 export default Board;
