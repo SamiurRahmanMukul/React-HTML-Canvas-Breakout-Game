@@ -1,9 +1,13 @@
 import React, { useEffect, useRef } from "react";
 import data from "../../../data/data";
+import AllBroken from "../../../lib/AllBroke";
 import { BallMovement } from "../../../lib/BallMovement";
 import Brick from "../../../lib/Brick";
 import BrickCollision from "../../../lib/BrickCollision";
 import Paddle from "../../../lib/Paddle";
+import PaddleHit from "../../../lib/PaddleHit";
+import PlayerStats from "../../../lib/PlayerStats";
+import ResetBall from "../../../lib/ResetBall";
 import WallCollision from "../../../lib/WallCollision";
 let { ballObj, paddleProps, player, brickObj } = data;
 let bricks = [];
@@ -26,6 +30,9 @@ const Board = () => {
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+      // Score + Player Level
+      PlayerStats(ctx, player, canvas);
+
       // Display Bricks
       bricks.map((brick) => {
         return brick.draw(ctx);
@@ -34,8 +41,21 @@ const Board = () => {
       // Handle ball movement
       BallMovement(ctx, ballObj);
 
+      // Check all broken
+      AllBroken(bricks, player, brickObj);
+
+      if (player.lives === 0) {
+        alert("Game Over! Press OK to restart game");
+
+        player.lives = 5;
+        player.level = 1;
+        player.score = 0;
+        ResetBall(ballObj, paddleProps);
+        bricks.length = 0;
+      }
+
       // Handle ball & wall collision
-      WallCollision(ballObj, canvas);
+      WallCollision(ballObj, canvas, player, paddleProps);
 
       // Brick Collision
       let brickCollision;
@@ -57,6 +77,9 @@ const Board = () => {
       }
 
       Paddle(ctx, canvas, paddleProps);
+
+      // Paddle + Ball Collision
+      PaddleHit(ballObj, paddleProps);
 
       requestAnimationFrame(render);
     };

@@ -1,21 +1,16 @@
-export default function WallCollision(ballObj, canvas) {
-  if (ballObj.x + ballObj.rad > canvas.width) {
-    ballObj.x = canvas.width - ballObj.rad;
-    ballObj.dx = -ballObj.dx;
-  }
-
-  if (ballObj.x - ballObj.rad < 0) {
-    ballObj.x = ballObj.rad;
-    ballObj.dx = -ballObj.dx;
-  }
-
+export default function WallCollision(ballObj, canvas, player, paddleProps) {
   if (ballObj.y + ballObj.rad > canvas.height) {
-    ballObj.y = canvas.height - ballObj.rad;
-    ballObj.dy = -ballObj.dy;
+    player.lives--;
+    ballObj.x = paddleProps.x;
+    ballObj.y = paddleProps.y - 30;
+    ballObj.dx = 6 * (Math.random() * 2 - 1);
+    ballObj.dy = -6;
+  }
+  if (ballObj.y - ballObj.rad < 0) {
+    ballObj.dy *= -1;
   }
 
-  if (ballObj.y - ballObj.rad < 0) {
-    ballObj.y = ballObj.rad;
-    ballObj.dy = -ballObj.dy;
+  if (ballObj.x + ballObj.rad > canvas.width || ballObj.x - ballObj.rad < 0) {
+    ballObj.dx *= -1;
   }
 }
